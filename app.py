@@ -1,7 +1,19 @@
 import streamlit as st
 
-st.set_page_config(page_title="Test")
+st.title("Debug Test")
 
-st.title("Hello Render")
+st.write("Step 1")
 
-st.success("Streamlit is working")
+import pandas as pd
+
+st.write("Step 2")
+
+movies = pd.read_csv("dataset/movies.csv")
+
+st.write("Step 3")
+
+from recommender import recommend
+
+st.write("Step 4")
+
+st.success("Everything loaded successfully!")
