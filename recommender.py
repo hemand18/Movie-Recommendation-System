@@ -1,36 +1,14 @@
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+
+print("Step 1: Loading dataset")
 
 movies = pd.read_csv("dataset/movies.csv")
 
-movies["genres"] = movies["genres"].fillna("")
+print("Step 2: Dataset loaded")
 
-cv = CountVectorizer(stop_words="english")
+print(movies.columns.tolist())
 
-vectors = cv.fit_transform(movies["genres"])
-
-similarity = cosine_similarity(vectors)
+print("Step 3: Import successful")
 
 def recommend(movie_name):
-
-    movie_index = movies[
-        movies["title"] == movie_name
-    ].index[0]
-
-    distances = similarity[movie_index]
-
-    movie_list = sorted(
-        list(enumerate(distances)),
-        reverse=True,
-        key=lambda x: x[1]
-    )[1:6]
-
-    recommendations = []
-
-    for movie in movie_list:
-        recommendations.append(
-            movies.iloc[movie[0]].title
-        )
-
-    return recommendations
+    return ["Test Movie 1", "Test Movie 2"]
