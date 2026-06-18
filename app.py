@@ -1,27 +1,49 @@
 import streamlit as st
 import pandas as pd
-from recommender import recommend
-
-# Load dataset
-movies = pd.read_csv("dataset/movies.csv")
 
 st.set_page_config(
     page_title="Movie Recommendation System",
-    page_icon="🎬"
+    page_icon="🎬",
+    layout="centered"
 )
 
 st.title("🎬 Movie Recommendation System")
+st.write("Find movies similar to your favorite movie.")
 
-selected_movie = st.selectbox(
-    "Select a Movie",
-    movies['title'].values
-)
+try:
+    # Import recommendation function
+    from recommender import recommend
 
-if st.button("Recommend Movies"):
+    # Load dataset
+    movies = pd.read_csv("dataset/movies.csv")
 
-    recommendations = recommend(selected_movie)
+    st.success("Application loaded successfully!")
 
-    st.subheader("Recommended Movies")
+    # Movie selection
+    selected_movie = st.selectbox(
+        "Select a Movie",
+        movies['title'].values
+    )
 
-    for movie in recommendations:
-        st.write("✅", movie)
+    # Recommend button
+    if st.button("Recommend Movies"):
+
+        recommendations = recommend(selected_movie)
+
+        st.subheader("Recommended Movies")
+
+        if recommendations:
+            for movie in recommendations:
+                st.write(f"✅ {movie}")
+        else:
+            st.warning("No recommendations found.")
+
+except FileNotFoundError as e:
+    st.error(f"Dataset file not found: {e}")
+
+except ImportError as e:
+    st.error(f"Import error: {e}")
+
+except Exception as e:
+    st.error(f"An error occurred: {e}")
+    st.exception(e)
