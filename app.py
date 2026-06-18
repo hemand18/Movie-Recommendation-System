@@ -1,49 +1,187 @@
 import streamlit as st
 import pandas as pd
+from recommender import recommend
+
+# --------------------------------------------------
+# PAGE CONFIG
+# --------------------------------------------------
 
 st.set_page_config(
-    page_title="Movie Recommendation System",
+    page_title="AI Movie Recommendation System",
     page_icon="🎬",
-    layout="centered"
+    layout="wide"
 )
 
-st.title("🎬 Movie Recommendation System")
-st.write("Find movies similar to your favorite movie.")
+# --------------------------------------------------
+# LOAD DATA
+# --------------------------------------------------
 
-try:
-    # Import recommendation function
-    from recommender import recommend
+movies = pd.read_csv("dataset/movies.csv")
 
-    # Load dataset
-    movies = pd.read_csv("dataset/movies.csv")
+# --------------------------------------------------
+# SIDEBAR
+# --------------------------------------------------
 
-    st.success("Application loaded successfully!")
+st.sidebar.title("🎬 Movie Recommender")
 
-    # Movie selection
-    selected_movie = st.selectbox(
-        "Select a Movie",
-        movies['title'].values
+st.sidebar.info("""
+### AI Movie Recommendation System
+
+Built using:
+
+- Python
+- Streamlit
+- Pandas
+- Scikit-Learn
+- Machine Learning
+
+Algorithm:
+Content-Based Filtering + Cosine Similarity
+""")
+
+st.sidebar.success("✅ Model Loaded Successfully")
+
+# --------------------------------------------------
+# HEADER
+# --------------------------------------------------
+
+st.title("🎬 AI Movie Recommendation System")
+
+st.markdown("""
+Discover movies similar to your favorites using
+Machine Learning and Content-Based Filtering.
+""")
+
+st.divider()
+
+# --------------------------------------------------
+# METRICS
+# --------------------------------------------------
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    st.metric(
+        label="🎥 Total Movies",
+        value=len(movies)
     )
 
-    # Recommend button
-    if st.button("Recommend Movies"):
+with col2:
+    st.metric(
+        label="🤖 AI Model",
+        value="Active"
+    )
+
+with col3:
+    st.metric(
+        label="⚡ Recommendations",
+        value="Instant"
+    )
+
+st.divider()
+
+# --------------------------------------------------
+# TABS
+# --------------------------------------------------
+
+tab1, tab2, tab3 = st.tabs([
+    "🎬 Recommendations",
+    "📊 Analytics",
+    "ℹ️ About"
+])
+
+# ==================================================
+# TAB 1
+# ==================================================
+
+with tab1:
+
+    st.subheader("Find Similar Movies")
+
+    selected_movie = st.selectbox(
+        "Choose a Movie",
+        movies["title"].values
+    )
+
+    if st.button("🚀 Recommend Movies"):
 
         recommendations = recommend(selected_movie)
 
-        st.subheader("Recommended Movies")
+        st.success(
+            f"Top recommendations for: {selected_movie}"
+        )
 
-        if recommendations:
-            for movie in recommendations:
-                st.write(f"✅ {movie}")
-        else:
-            st.warning("No recommendations found.")
+        cols = st.columns(2)
 
-except FileNotFoundError as e:
-    st.error(f"Dataset file not found: {e}")
+        for i, movie in enumerate(recommendations):
 
-except ImportError as e:
-    st.error(f"Import error: {e}")
+            with cols[i % 2]:
+                st.info(f"🎬 {movie}")
 
-except Exception as e:
-    st.error(f"An error occurred: {e}")
-    st.exception(e)
+# ==================================================
+# TAB 2
+# ==================================================
+
+with tab2:
+
+    st.subheader("Dataset Insights")
+
+    st.write("Movies Available in Dataset")
+
+    genre_counts = (
+        movies["genres"]
+        .fillna("Unknown")
+        .str.split("|")
+        .explode()
+        .value_counts()
+        .head(10)
+    )
+
+    st.bar_chart(genre_counts)
+
+    st.write("Top Genres")
+
+    st.dataframe(
+        genre_counts.reset_index(),
+        use_container_width=True
+    )
+
+# ==================================================
+# TAB 3
+# ==================================================
+
+with tab3:
+
+    st.subheader("About Project")
+
+    st.write("""
+This project uses Machine Learning techniques
+to recommend movies based on similarity.
+
+### Technologies Used
+- Python
+- Pandas
+- Scikit-Learn
+- Streamlit
+
+### Machine Learning Concepts
+- Content-Based Filtering
+- Count Vectorization
+- Cosine Similarity
+
+### Features
+- Personalized Recommendations
+- Interactive Dashboard
+- Real-Time Predictions
+- Data Visualization
+""")
+
+st.divider()
+
+# --------------------------------------------------
+# FOOTER
+# --------------------------------------------------
+
+st.caption(
+    "Built with ❤️ using Streamlit and Machine Learning"
+)
