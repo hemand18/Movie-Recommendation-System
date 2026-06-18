@@ -1,9 +1,7 @@
 import streamlit as st
 
-st.title("Debug Test")
+st.set_page_config(page_title="Test")
 
-try:
-    from recommender import recommend
-    st.success("✅ recommender.py imported successfully")
-except Exception as e:
-    st.error(f"❌ Import Error: {e}")
+st.title("Hello Render")
+
+st.success("Streamlit is working")
