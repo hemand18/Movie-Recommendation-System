@@ -1,9 +1,9 @@
 import streamlit as st
-import pandas as pd
 
-movies = pd.read_csv("dataset/movies.csv")
+st.title("Debug Test")
 
-st.write("Columns in Dataset:")
-st.write(movies.columns.tolist())
-
-st.write(movies.head())
+try:
+    from recommender import recommend
+    st.success("✅ recommender.py imported successfully")
+except Exception as e:
+    st.error(f"❌ Import Error: {e}")
